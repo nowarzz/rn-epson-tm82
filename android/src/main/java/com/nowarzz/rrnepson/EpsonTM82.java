@@ -71,6 +71,7 @@ public class EpsonTM82 implements MyPrinter{
         }
         res.success = true;
         res.message = "Added";
+        return res;
     }
 
     @Override
