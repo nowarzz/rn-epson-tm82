@@ -75,7 +75,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   }
 
   @ReactMethod
-  public MyReturnValue writeFeed(int length,Promise promise) {
+  public void writeFeed(int length,Promise promise) {
     MyReturnValue res = printer.writeFeed(length);
     if(res.success){
       promise.resolve(res.message);
@@ -85,7 +85,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   }
 
   @ReactMethod
-  public MyReturnValue writeCut(ReadableMap property,Promise promise) { 
+  public void writeCut(ReadableMap property,Promise promise) { 
     MyReturnValue res = printer.writeCut(property);
     if(res.success){
       promise.resolve(res.message);
@@ -95,7 +95,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   }
 
   @ReactMethod
-  public MyReturnValue startPrint(Promise promise) {
+  public void startPrint(Promise promise) {
     MyReturnValue res = printer.startPrint(); 
     if(res.success){
       promise.resolve(res.message);
