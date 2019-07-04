@@ -59,7 +59,7 @@ public class EpsonTM82 implements MyPrinter{
                 this.mPrinter.disconnect();
                 this.listener.onInitializeSuccess("Success connected to 192.168.0.117");
             }catch(Epos2Exception e){
-String message;
+            String message;
             int errorStatus = e.getErrorStatus();
             switch(errorStatus){
                 case Epos2Exception.ERR_ILLEGAL: message = "Koneksi printer telah terbuka"; break;
@@ -80,6 +80,7 @@ String message;
     public void writeText(String text, ReadableMap property) {
         try{
             this.mPrinter.connect("TCP:192.168.0.117", Printer.PARAM_DEFAULT);
+            Toast.makeText(this.reactContext,"Connected",1).show();
         }catch(Epos2Exception e){
             String message;
             int errorStatus = e.getErrorStatus();
@@ -102,6 +103,8 @@ String message;
         }
         try{
             this.mPrinter.addText(text);
+            this.mPrinter.sendData(Printer.PARAM_DEFAULT);
+            Toast.makeText(this.reactContext,text,1).show();
         }catch(Epos2Exception e){
             String message;
             int errorStatus = e.getErrorStatus();
@@ -117,7 +120,7 @@ String message;
         }
         try{
                 this.mPrinter.disconnect();
-                this.listener.onInitializeSuccess("Success connected to 192.168.0.117");
+                Toast.makeText(this.reactContext,"Disconnect",1).show();
             }catch(Epos2Exception e){
             String message;
             int errorStatus = e.getErrorStatus();
