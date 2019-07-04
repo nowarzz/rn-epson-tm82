@@ -141,7 +141,7 @@ public class EpsonTM82 implements MyPrinter{
 
     private boolean connectPrinter() {
         boolean isBeginTransaction = false;
-        if this.(mPrinter == null) {
+        if (this.mPrinter == null) {
             return false;
         }
         try {
@@ -189,7 +189,7 @@ public class EpsonTM82 implements MyPrinter{
         String warrningsMsg = "";
         if(status == null) return;
         if (status.getPaper() == Printer.PAPER_NEAR_END) {
-            warningsMsg += getString("Kertas Sudah Mau Habis";
+            warningsMsg += getString("Kertas Sudah Mau Habis");
         }
 
         if (status.getBatteryLevel() == Printer.BATTERY_LEVEL_1) {
