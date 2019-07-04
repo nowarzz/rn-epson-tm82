@@ -28,7 +28,7 @@ public class EpsonTM82 implements MyPrinter{
         this.listener = eventListener;
         Boolean connected = false;
         try{
-            this.mPrinter = new Printer(Printer.TM_T82,Printer.MODEL_SOUHTASIA);
+            this.mPrinter = new Printer(Printer.TM_T82,Printer.MODEL_SOUTHASIA, context);
         }catch(Epos2Exception e){
             this.listener.onInitializeError(new Error(e));
         }

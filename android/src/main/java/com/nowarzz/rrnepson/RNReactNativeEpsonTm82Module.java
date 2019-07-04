@@ -41,7 +41,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   }
 
   @ReactMethod
-  public void initilize(String type) {
+  public void initilize() {
     printer = new EpsonTM82(getReactApplicationContext(), this);
   }
 
