@@ -189,14 +189,14 @@ public class EpsonTM82 implements MyPrinter{
         String warningsMsg = "";
         if(status == null) return;
         if (status.getPaper() == Printer.PAPER_NEAR_END) {
-            warningsMsg += getString("Kertas Sudah Mau Habis");
+            warningsMsg += "Kertas Sudah Mau Habis";
         }
 
         if (status.getBatteryLevel() == Printer.BATTERY_LEVEL_1) {
-            warningsMsg += getString("Baterai sudah mau habis");
+            warningsMsg += "Baterai sudah mau habis";
         }
 
-        if(warningsMsg.length > 0){
+        if(warningsMsg.length() > 0){
             Toast.makeText(this.reactContext,warningsMsg,1).show();
         }
     }
@@ -266,7 +266,7 @@ public class EpsonTM82 implements MyPrinter{
         }
         this.mPrinter.clearCommandBuffer();
         this.mPrinter.setReceiveEventListener(null);
-        this.onPrinterClosed("Berhasil ditutup");
+        this.listener.onPrinterClosed("Berhasil ditutup");
         this.mPrinter = null;
         res.success = true;
         res.message = "Berhasil";
