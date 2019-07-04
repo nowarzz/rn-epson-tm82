@@ -14,7 +14,7 @@ import com.epson.epos2.printer.ReceiveListener;
 
 import java.util.Map;
 
-public class EpsonTM82 implements MyPrinter{
+public class EpsonTM82 implements MyPrinter, ReceiveListener{
 
     private String TAG = "EPSONPrinter";
     private Printer mPrinter = null;
@@ -37,12 +37,8 @@ public class EpsonTM82 implements MyPrinter{
             }
             this.listener.onInitializeError(new Error(message));
         } 
+        this.mPrinter.setReceiveEventListener(context);
         this.listener.onInitializeSuccess("Success Connected");       
-    }
-
-    public void connect(){
-        
-
     }
 
     @Override
@@ -168,7 +164,7 @@ public class EpsonTM82 implements MyPrinter{
             return false;
         }
         try {
-            mPrinter.beginTransaction();
+            this.mPrinter.beginTransaction();
             isBeginTransaction = true;
         }
         catch (Exception e) {
@@ -265,15 +261,75 @@ public class EpsonTM82 implements MyPrinter{
            res.message = message;
            return res;
         }
-        this.mPrinter.clearCommandBuffer();
-        this.mPrinter.setReceiveEventListener(null);
-        this.listener.onPrinterClosed("Berhasil ditutup");
-        this.mPrinter = null;
+        // this.mPrinter.clearCommandBuffer();
+        // this.mPrinter.setReceiveEventListener(null);
+        // this.listener.onPrinterClosed("Berhasil ditutup");
+        // this.mPrinter = null;
         res.success = true;
         res.message = "Berhasil";
         return res;
     }
 
+      private void finalizeObject() {
+        if (this.mPrinter == null) {
+            return;
+        }
 
+        this.mPrinter.clearCommandBuffer();
+
+        this.mPrinter.setReceiveEventListener(null);
+
+        this.mPrinter = null;
+    }
+
+
+    private void disconnectPrinter() {
+        if (this.mPrinter == null) {
+            return;
+        }
+
+        try {
+            this.mPrinter.endTransaction();
+        }
+        catch (final Exception e) {
+            // runOnUiThread(new Runnable() {
+            //     @Override
+            //     public synchronized void run() {
+            //         ShowMsg.showException(e, "endTransaction", mContext);
+            //     }
+            // });
+        }
+
+        try {
+            this.mPrinter.disconnect();
+        }
+        catch (final Exception e) {
+            // runOnUiThread(new Runnable() {
+            //     @Override
+            //     public synchronized void run() {
+            //         ShowMsg.showException(e, "disconnect", mContext);
+            //     }
+            // });
+        }
+
+        finalizeObject();
+    }
+
+    @Override
+    public void onPtrReceive(final Printer printerObj, final int coode, final PrinterStatusInfo status, final String printJobId){
+        runOnUiThread(new Runnable() {
+            @Override
+            public synchronized void run(){
+                dispPrinterWarnings(status);
+                new Thread(new Runnable(){
+                    @Override
+                    public void run(){
+
+                    }
+                }).start();
+            }
+        })
+    }
+    
 
 }
