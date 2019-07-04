@@ -292,24 +292,14 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener{
             this.mPrinter.endTransaction();
         }
         catch (final Exception e) {
-            // runOnUiThread(new Runnable() {
-            //     @Override
-            //     public synchronized void run() {
-            //         ShowMsg.showException(e, "endTransaction", mContext);
-            //     }
-            // });
+
         }
 
         try {
             this.mPrinter.disconnect();
         }
         catch (final Exception e) {
-            // runOnUiThread(new Runnable() {
-            //     @Override
-            //     public synchronized void run() {
-            //         ShowMsg.showException(e, "disconnect", mContext);
-            //     }
-            // });
+
         }
 
         finalizeObject();
@@ -317,18 +307,8 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener{
 
     @Override
     public void onPtrReceive(final Printer printerObj, final int coode, final PrinterStatusInfo status, final String printJobId){
-        runOnUiThread(new Runnable() {
-            @Override
-            public synchronized void run(){
-                dispPrinterWarnings(status);
-                new Thread(new Runnable(){
-                    @Override
-                    public void run(){
-
-                    }
-                }).start();
-            }
-        })
+        dispPrinterWarnings(status);
+        disconnectPrinter();
     }
     
 
