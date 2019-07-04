@@ -49,7 +49,7 @@ public class EpsonTM82 implements Printer{
                 case Epos2Exception.ERR_PROCESSING: message = "Tidak dapat menjalankan operasi"; break;
                 case Epos2Exception.ERR_NOT_FOUND: message = "Printer tidak ditemukan"; break;
                 case Epos2Exception.ERR_IN_USE: message = "Printer sedang dipakai"; break;
-                case Epos2Exception.ERR_TYPE_INVALID: "Printer bukan TM 82"; break;
+                case Epos2Exception.ERR_TYPE_INVALID: message = "Printer bukan TM 82"; break;
             }
             Toast.makeeText(this.reactContext,message,1).show();
             this.listener.onInitializeError(new Error(message));
@@ -57,7 +57,7 @@ public class EpsonTM82 implements Printer{
         }
         if(connected){
             try{
-                this.mPrinter.disconnect()
+                this.mPrinter.disconnect();
                 this.listener.onInitializeSuccess("Success connected to 192.168.0.117");
             }catch(Epos2Exception e){
 String message;
@@ -95,7 +95,7 @@ String message;
                 case Epos2Exception.ERR_PROCESSING: message = "Tidak dapat menjalankan operasi"; break;
                 case Epos2Exception.ERR_NOT_FOUND: message = "Printer tidak ditemukan"; break;
                 case Epos2Exception.ERR_IN_USE: message = "Printer sedang dipakai"; break;
-                case Epos2Exception.ERR_TYPE_INVALID: "Printer bukan TM 82"; break;
+                case Epos2Exception.ERR_TYPE_INVALID: message = "Printer bukan TM 82"; break;
             }
             Toast.makeeText(this.reactContext,message,1).show();
             this.listener.onInitializeError(new Error(message));
@@ -116,7 +116,7 @@ String message;
             return;
         }
         try{
-                this.mPrinter.disconnect()
+                this.mPrinter.disconnect();
                 this.listener.onInitializeSuccess("Success connected to 192.168.0.117");
             }catch(Epos2Exception e){
             String message;
