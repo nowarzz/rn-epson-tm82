@@ -7,6 +7,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.Promise;
 
 
 public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule implements PrinterEventListener {
@@ -14,6 +15,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   private final ReactApplicationContext reactContext;
 
   MyPrinter printer;
+  Promise mPromise;
 
   public RNReactNativeEpsonTm82Module(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -27,12 +29,18 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
 
   @Override
   public void onInitializeSuccess(String deviceInfo) {
-    Toast.makeText(getReactApplicationContext(), deviceInfo, Toast.LENGTH_LONG).show();
+    if(mPromise !== null){
+      mPromise.resolve(deviceInfo);
+      Toast.makeText(getReactApplicationContext(), deviceInfo, Toast.LENGTH_LONG).show();
+    }
   }
 
   @Override
   public void onInitializeError(Error error) {
-    Toast.makeText(getReactApplicationContext(), "ERROR:" + error.toString(), Toast.LENGTH_LONG).show();
+    if(mPromise !== null){
+      mPromise.reject(error.toString());
+      Toast.makeText(getReactApplicationContext(), "ERROR:" + error.toString(), Toast.LENGTH_LONG).show();
+    }
   }
 
   @Override
@@ -41,13 +49,19 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   }
 
   @ReactMethod
-  public void initilize() {
+  public void initilize(Promise promise) {
+    mPromise = promise;
     printer = new EpsonTM82(getReactApplicationContext(), this);
   }
 
   @ReactMethod
-  public void writeText(String text, ReadableMap property) {
-    printer.writeText(text, property);
+  public void writeText(String text, ReadableMap property,Promise promise) {
+    MyReturnValue res = printer.writeText(text, property);
+    if(res.success){
+      promise.resolve(message);
+    }else{
+      promise.reject(message);
+    }
   }
 
   @ReactMethod
@@ -61,18 +75,32 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   }
 
   @ReactMethod
-  public void writeFeed(int length) {
-    printer.writeFeed(length);
+  public MyReturnValue writeFeed(int length,Promise promise) {
+    MyReturnValue res = printer.writeFeed(length);
+    if(res.success){
+      promise.resolve(res.message);
+    }else{
+      promise.reject(res.message);
+    }
   }
 
   @ReactMethod
-  public void writeCut(ReadableMap property) { printer.writeCut(property); }
+  public MyReturnValue writeCut(ReadableMap property,Promise promise) { 
+    MyReturnValue res = printer.writeCut(property);
+    if(res.success){
+      promise.resolve(res.message);
+    }else{
+      promise.reject(res.message);
+    }
+  }
 
   @ReactMethod
-  public void startPrint() { printer.startPrint(); }
-
-  @ReactMethod
-  public void endPrint() {
-      printer.endPrint();
+  public MyReturnValue startPrint(Promise promise) {
+    MyReturnValue res = printer.startPrint(); 
+    if(res.success){
+      promise.resolve(res.message);
+    }else{
+      promise.reject(res.message);
+    }
   }
 }
