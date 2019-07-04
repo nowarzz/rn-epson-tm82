@@ -1,5 +1,4 @@
-
-package com.reactlibrary;
+package com.nowarzz.rnepson;
 
 import android.widget.Toast;
 
@@ -7,12 +6,14 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.ReadableMap;
+
 
 public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule implements PrinterEventListener {
 
   private final ReactApplicationContext reactContext;
 
-  Printer printer;
+  MyPrinter printer;
 
   public RNReactNativeEpsonTm82Module(ReactApplicationContext reactContext) {
     super(reactContext);

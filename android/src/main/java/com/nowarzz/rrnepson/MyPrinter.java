@@ -1,7 +1,7 @@
-package com.reactlibrary;
+package com.nowarzz.rnepson;
 import com.facebook.react.bridge.ReadableMap;
 
-public interface Printer {
+public interface MyPrinter {
     void writeText(String text, ReadableMap property);
     void writeQRCode(String content, ReadableMap property);
     void writeImage(String path, ReadableMap property);

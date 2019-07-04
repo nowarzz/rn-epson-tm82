@@ -1,4 +1,4 @@
-package com.reactlibrary;
+package com.nowarzz.rnepson;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,7 +16,7 @@ import com.epson.epos2.printer.ReceiveListener;
 
 import java.util.Map;
 
-public class EpsonTM82 implements com.reactlibrary.Printer{
+public class EpsonTM82 implements MyPrinter{
 
     private String TAG = "EPSONPrinter";
     private Printer mPrinter = null;
@@ -35,7 +35,7 @@ public class EpsonTM82 implements com.reactlibrary.Printer{
         try{
             this.mPrinter.connect("TCP:192.168.0.117", Printer.PARAM_DEFAULT);
             PrinterStatusInfo mPrinterConn = this.mPrinter.getStatus();
-            connected = mPrinterConn.connection == Printer.TRUE && mPrinterConn.online == Printer.TRUE;
+            connected = mPrinterConn.getConnection() == Printer.TRUE && mPrinterConn.getOnline() == Printer.TRUE;
         }catch(Epos2Exception e){
             String message;
             int errorStatus = e.getErrorStatus();
@@ -50,8 +50,9 @@ public class EpsonTM82 implements com.reactlibrary.Printer{
                 case Epos2Exception.ERR_NOT_FOUND: message = "Printer tidak ditemukan"; break;
                 case Epos2Exception.ERR_IN_USE: message = "Printer sedang dipakai"; break;
                 case Epos2Exception.ERR_TYPE_INVALID: message = "Printer bukan TM 82"; break;
+                default: message = "Error";
             }
-            Toast.makeeText(this.reactContext,message,1).show();
+            Toast.makeText(this.reactContext,message,1).show();
             this.listener.onInitializeError(new Error(message));
             return;
         }
@@ -67,9 +68,10 @@ String message;
                 case Epos2Exception.ERR_MEMORY: message = "Out of memory"; break;
                 case Epos2Exception.ERR_FAILURE: message = "Unknown Error"; break;
                 case Epos2Exception.ERR_PROCESSING: message = "Tidak dapat menjalankan operasi"; break;
-                case Epos2Exception.DISCONNECT : message = "Gagal memutuskan koneksi dengan printer"; break;
+                case Epos2Exception.ERR_DISCONNECT : message = "Gagal memutuskan koneksi dengan printer"; break;
+                default: message = "Error";
             }
-            Toast.makeeText(this.reactContext,message,1).show();
+            Toast.makeText(this.reactContext,message,1).show();
             this.listener.onInitializeError(new Error(message));
             return;
             }
@@ -80,8 +82,6 @@ String message;
     public void writeText(String text, ReadableMap property) {
         try{
             this.mPrinter.connect("TCP:192.168.0.117", Printer.PARAM_DEFAULT);
-            PrinterStatusInfo mPrinterConn = this.mPrinter.getStatus();
-            connected = mPrinterConn.connection == Printer.TRUE && mPrinterConn.online == Printer.TRUE;
         }catch(Epos2Exception e){
             String message;
             int errorStatus = e.getErrorStatus();
@@ -96,8 +96,9 @@ String message;
                 case Epos2Exception.ERR_NOT_FOUND: message = "Printer tidak ditemukan"; break;
                 case Epos2Exception.ERR_IN_USE: message = "Printer sedang dipakai"; break;
                 case Epos2Exception.ERR_TYPE_INVALID: message = "Printer bukan TM 82"; break;
+                default: message = "Error";
             }
-            Toast.makeeText(this.reactContext,message,1).show();
+            Toast.makeText(this.reactContext,message,1).show();
             this.listener.onInitializeError(new Error(message));
             return;
         }
@@ -110,8 +111,9 @@ String message;
                 case Epos2Exception.ERR_PARAM: message = "Parameter Invalid"; break;
                 case Epos2Exception.ERR_MEMORY: message = "Out of memory"; break;
                 case Epos2Exception.ERR_FAILURE: message = "Unknown Error"; break;
+                default: message = "Error";
             }
-            Toast.makeeText(this.reactContext,message,1).show();
+            Toast.makeText(this.reactContext,message,1).show();
             this.listener.onInitializeError(new Error(message));
             return;
         }
@@ -126,9 +128,10 @@ String message;
                 case Epos2Exception.ERR_MEMORY: message = "Out of memory"; break;
                 case Epos2Exception.ERR_FAILURE: message = "Unknown Error"; break;
                 case Epos2Exception.ERR_PROCESSING: message = "Tidak dapat menjalankan operasi"; break;
-                case Epos2Exception.DISCONNECT : message = "Gagal memutuskan koneksi dengan printer"; break;
+                case Epos2Exception.ERR_DISCONNECT : message = "Gagal memutuskan koneksi dengan printer"; break;
+                default: message = "Error";
             }
-            Toast.makeeText(this.reactContext,message,1).show();
+            Toast.makeText(this.reactContext,message,1).show();
             this.listener.onInitializeError(new Error(message));
             return;
             }
@@ -136,108 +139,31 @@ String message;
 
     @Override
     public void writeQRCode(String content, ReadableMap property) {
-        mUsbPrinter.doFunction(Const.TX_UNIT_TYPE, Const.TX_UNIT_MM, 0);
-        mUsbPrinter.doFunction(Const.TX_QR_DOTSIZE, 7, 0);
-        mUsbPrinter.doFunction(Const.TX_QR_ERRLEVEL, Const.TX_QR_ERRLEVEL_H, 0);
-        if (property.hasKey("level")) {
-            switch (property.getString("level")) {
-                case "H":
-                    mUsbPrinter.doFunction(Const.TX_QR_ERRLEVEL, Const.TX_QR_ERRLEVEL_H, 0);
-                    break;
-                case "L":
-                    mUsbPrinter.doFunction(Const.TX_QR_ERRLEVEL, Const.TX_QR_ERRLEVEL_L, 0);
-                    break;
-                case "M":
-                    mUsbPrinter.doFunction(Const.TX_QR_ERRLEVEL, Const.TX_QR_ERRLEVEL_M,0 );
-                    break;
-                case "Q":
-                    mUsbPrinter.doFunction(Const.TX_QR_ERRLEVEL, Const.TX_QR_ERRLEVEL_Q, 0);
-                    break;
-            }
-        }
-        mUsbPrinter.doFunction(Const.TX_ALIGN, Const.TX_ALIGN_RIGHT, 0);
-        if (property.hasKey("align")) {
-            switch (property.getString("align")) {
-                case "center":
-                    mUsbPrinter.doFunction(Const.TX_ALIGN, Const.TX_ALIGN_CENTER, 0);
-                    break;
-                case "left":
-                    mUsbPrinter.doFunction(Const.TX_ALIGN, Const.TX_ALIGN_LEFT, 0);
-                    break;
-                case "right":
-                    mUsbPrinter.doFunction(Const.TX_ALIGN, Const.TX_ALIGN_RIGHT, 0);
-                    break;
-            }
-        }
-        this.mUsbPrinter.printQRcode(content);
+
     }
 
     @Override
     public void writeImage(String path, ReadableMap property) {
-        mUsbPrinter.doFunction(Const.TX_ALIGN, Const.TX_ALIGN_RIGHT, 0);
-        if (property.hasKey("align")) {
-            switch (property.getString("align")) {
-                case "center":
-                    mUsbPrinter.doFunction(Const.TX_ALIGN, Const.TX_ALIGN_CENTER, 0);
-                    break;
-                case "left":
-                    mUsbPrinter.doFunction(Const.TX_ALIGN, Const.TX_ALIGN_LEFT, 0);
-                    break;
-                case "right":
-                    mUsbPrinter.doFunction(Const.TX_ALIGN, Const.TX_ALIGN_RIGHT, 0);
-                    break;
-            }
-        }
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap bitmap = BitmapFactory.decodeFile(path, options);
-        Toast.makeText(reactContext, "Image: " + bitmap.getWidth() + " x " + bitmap.getHeight(), 1).show();
-        mUsbPrinter.printImage(path);
+       
     }
 
     @Override
     public void writeFeed(int length) {
-        mUsbPrinter.doFunction(Const.TX_UNIT_TYPE, Const.TX_UNIT_MM, 0);
-        mUsbPrinter.doFunction(Const.TX_FEED, length, 0);
+       
     }
 
     @Override
     public void writeCut(ReadableMap property) {
-        if (property.hasKey("cut")) {
-            switch (property.getString("cut")) {
-                case "full":
-                    mUsbPrinter.doFunction(Const.TX_CUT, Const.TX_CUT_FULL, 0);
-                    break;
-                case "partial":
-                    mUsbPrinter.doFunction(Const.TX_CUT, Const.TX_CUT_PARTIAL, 0);
-                    break;
-            }
-        } else {
-            mUsbPrinter.doFunction(Const.TX_CUT, Const.TX_CUT_FULL, 0);
-        }
+       
     }
 
     @Override
     public void startPrint() {
-        mUsbPrinter = new UsbPrinter(reactContext);
-        UsbDevice dev = getCorrectDevice();
-        if (dev != null && mUsbPrinter.open(dev)) {
-            mUsbPrinter.init();
-        }
+        
     }
 
     @Override
     public void endPrint() {
-        mUsbPrinter.close();
     }
 
-    private UsbDevice getCorrectDevice() {
-        Map<String, UsbDevice> devMap = ((UsbManager) reactContext.getSystemService(Context.USB_SERVICE)).getDeviceList();
-        for (String name : devMap.keySet()) {
-            if (UsbPrinter.checkPrinter(devMap.get(name))) {
-                return devMap.get(name);
-            }
-        }
-        return null;
-    }
 }
