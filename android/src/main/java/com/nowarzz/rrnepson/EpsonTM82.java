@@ -112,7 +112,7 @@ public class EpsonTM82 implements MyPrinter{
     }
 
     @Override
-    public void writeCut(ReadableMap property) {
+    public MyReturnValue writeCut(ReadableMap property) {
        MyReturnValue res = new MyReturnValue();
        if(this.mPrinter == null){
            res.success = false;
@@ -186,7 +186,7 @@ public class EpsonTM82 implements MyPrinter{
     }
 
     private void dispPrinterWarnings(PrinterStatusInfo status){
-        String warrningsMsg = "";
+        String warningsMsg = "";
         if(status == null) return;
         if (status.getPaper() == Printer.PAPER_NEAR_END) {
             warningsMsg += getString("Kertas Sudah Mau Habis");
@@ -197,7 +197,7 @@ public class EpsonTM82 implements MyPrinter{
         }
 
         if(warningsMsg.length > 0){
-            Toast.makeText(this.reactContext,warrningsMsg,1).show();
+            Toast.makeText(this.reactContext,warningsMsg,1).show();
         }
     }
 
@@ -249,7 +249,7 @@ public class EpsonTM82 implements MyPrinter{
         }catch(Epos2Exception e){
             try{
                 this.mPrinter.disconnect();
-            }catch( Exception e){
+            }catch( Exception ee){
 
             }
             String message;
@@ -265,7 +265,7 @@ public class EpsonTM82 implements MyPrinter{
            return res;
         }
         this.mPrinter.clearCommandBuffer();
-        this.mPrinter.setReceiveeEventListener(null);
+        this.mPrinter.setReceiveEventListener(null);
         this.onPrinterClosed("Berhasil ditutup");
         this.mPrinter = null;
         res.success = true;

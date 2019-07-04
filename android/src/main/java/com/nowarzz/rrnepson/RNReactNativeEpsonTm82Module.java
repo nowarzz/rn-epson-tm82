@@ -58,9 +58,9 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   public void writeText(String text, ReadableMap property,Promise promise) {
     MyReturnValue res = printer.writeText(text, property);
     if(res.success){
-      promise.resolve(message);
+      promise.resolve(res.message);
     }else{
-      promise.reject(message);
+      promise.reject(res.message);
     }
   }
 
