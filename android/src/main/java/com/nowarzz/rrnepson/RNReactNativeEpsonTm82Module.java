@@ -16,6 +16,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
 
   MyPrinter printer;
   Promise mPromise;
+  Promise pPromise;
 
   public RNReactNativeEpsonTm82Module(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -45,7 +46,14 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
 
   @Override
   public void onPrinterClosed(String message) {
-    Toast.makeText(getReactApplicationContext(), "Printer closed: " + message, Toast.LENGTH_LONG).show();
+    if(pPromise != null){
+      if(message != "Printer has successfully closed"){
+        pPromise.reject(message);
+      }else{
+        pPromise.resolve(message);
+      }
+    }
+    // Toast.makeText(getReactApplicationContext(), "Printer closed: " + message, Toast.LENGTH_LONG).show();
   }
 
   @ReactMethod
@@ -96,11 +104,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
 
   @ReactMethod
   public void startPrint(Promise promise) {
+    pPromise = promise;
     MyReturnValue res = printer.startPrint(); 
-    if(res.success){
-      promise.resolve(res.message);
-    }else{
-      promise.reject(res.message);
-    }
   }
 }

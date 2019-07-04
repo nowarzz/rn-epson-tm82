@@ -1,4 +1,5 @@
 package com.nowarzz.rnepson;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,7 +15,7 @@ import com.epson.epos2.printer.ReceiveListener;
 
 import java.util.Map;
 
-public class EpsonTM82 implements MyPrinter, ReceiveListener{
+public class EpsonTM82 implements MyPrinter, ReceiveListener {
 
     private String TAG = "EPSONPrinter";
     private Printer mPrinter = null;
@@ -24,43 +25,57 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener{
     public EpsonTM82(final Context context, final PrinterEventListener eventListener) {
         this.reactContext = context;
         this.listener = eventListener;
-        try{
-            this.mPrinter = new Printer(Printer.TM_T82,Printer.MODEL_SOUTHASIA, context);
-        }catch(Epos2Exception e){
+        try {
+            this.mPrinter = new Printer(Printer.TM_T82, Printer.MODEL_SOUTHASIA, context);
+        } catch (Epos2Exception e) {
             String message;
             int errorStatus = e.getErrorStatus();
-            switch(errorStatus){
-                case Epos2Exception.ERR_PARAM : message = "Invalid Parameter saat inisialisasi"; break;
-                case Epos2Exception.ERR_MEMORY : message = "Memory tidak cukup"; break;
-                case Epos2Exception.ERR_UNSUPPORTED : message = "Model tidak didukung"; break;
-                default: message = Integer.toString(errorStatus);
+            switch (errorStatus) {
+            case Epos2Exception.ERR_PARAM:
+                message = "Invalid Parameter saat inisialisasi";
+                break;
+            case Epos2Exception.ERR_MEMORY:
+                message = "Memory tidak cukup";
+                break;
+            case Epos2Exception.ERR_UNSUPPORTED:
+                message = "Model tidak didukung";
+                break;
+            default:
+                message = Integer.toString(errorStatus);
             }
             this.listener.onInitializeError(new Error(message));
-        } 
-        this.mPrinter.setReceiveEventListener(context);
-        this.listener.onInitializeSuccess("Success Connected");       
+        }
+        this.mPrinter.setReceiveEventListener(this);
+        this.listener.onInitializeSuccess("Success Connected");
     }
 
     @Override
     public MyReturnValue writeText(String text, ReadableMap property) {
         MyReturnValue res = new MyReturnValue();
-        if(this.mPrinter == null){
+        if (this.mPrinter == null) {
             res.success = false;
             res.message = "Printer belum di inisiasi";
             return res;
         }
-        try{
+        try {
             this.mPrinter.addText(text);
-        }catch(Epos2Exception e){
+        } catch (Epos2Exception e) {
             String message;
             int errorStatus = e.getErrorStatus();
-            switch(errorStatus){
-                case Epos2Exception.ERR_PARAM: message = "Parameter Invalid"; break;
-                case Epos2Exception.ERR_MEMORY: message = "Out of memory"; break;
-                case Epos2Exception.ERR_FAILURE: message = "Unknown Error"; break;
-                default: message = Integer.toString(errorStatus);
+            switch (errorStatus) {
+            case Epos2Exception.ERR_PARAM:
+                message = "Parameter Invalid";
+                break;
+            case Epos2Exception.ERR_MEMORY:
+                message = "Out of memory";
+                break;
+            case Epos2Exception.ERR_FAILURE:
+                message = "Unknown Error";
+                break;
+            default:
+                message = Integer.toString(errorStatus);
             }
-            Toast.makeText(this.reactContext,message,1).show();
+            Toast.makeText(this.reactContext, message, 1).show();
             res.success = false;
             res.message = message;
             return res;
@@ -72,68 +87,82 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener{
 
     @Override
     public void writeQRCode(String content, ReadableMap property) {
-        Toast.makeText(this.reactContext,"Currently Not Supported",1).show();
+        Toast.makeText(this.reactContext, "Currently Not Supported", 1).show();
     }
 
     @Override
     public void writeImage(String path, ReadableMap property) {
-        Toast.makeText(this.reactContext,"Currently Not Supported",1).show();
+        Toast.makeText(this.reactContext, "Currently Not Supported", 1).show();
     }
 
     @Override
     public MyReturnValue writeFeed(int length) {
-       MyReturnValue res = new MyReturnValue();
-       if(this.mPrinter == null){
-           res.success = false;
-           res.message = "Printer belum di inisiasi";
-           return res;
-       }
-       try{
-           this.mPrinter.addFeedLine(length);
-       }catch(Epos2Exception e){
-           String message;
-           int errorStatus = e.getErrorStatus();
-           switch(errorStatus){
-               case Epos2Exception.ERR_PARAM : message = "Invalid parameter"; break;
-               case Epos2Exception.ERR_MEMORY: message = "Out of Memory"; break;
-               case Epos2Exception.ERR_FAILURE : message = "Unknown Error"; break;
-               default: message = Integer.toString(errorStatus);
-           }
-           res.success = false;
-           res.message = message;
-           return res;
-       }
-       res.success = true;
-       res.message = "Sukses";
-       return res;
+        MyReturnValue res = new MyReturnValue();
+        if (this.mPrinter == null) {
+            res.success = false;
+            res.message = "Printer belum di inisiasi";
+            return res;
+        }
+        try {
+            this.mPrinter.addFeedLine(length);
+        } catch (Epos2Exception e) {
+            String message;
+            int errorStatus = e.getErrorStatus();
+            switch (errorStatus) {
+            case Epos2Exception.ERR_PARAM:
+                message = "Invalid parameter";
+                break;
+            case Epos2Exception.ERR_MEMORY:
+                message = "Out of Memory";
+                break;
+            case Epos2Exception.ERR_FAILURE:
+                message = "Unknown Error";
+                break;
+            default:
+                message = Integer.toString(errorStatus);
+            }
+            res.success = false;
+            res.message = message;
+            return res;
+        }
+        res.success = true;
+        res.message = "Sukses";
+        return res;
     }
 
     @Override
     public MyReturnValue writeCut(ReadableMap property) {
-       MyReturnValue res = new MyReturnValue();
-       if(this.mPrinter == null){
-           res.success = false;
-           res.message = "Printer belum di inisiasi";
-           return res;
-       }
-       try{
-           this.mPrinter.addCut(Printer.PARAM_DEFAULT);
-       }catch(Epos2Exception e){
-           String message;
-           int errorStatus = e.getErrorStatus();
-           switch(errorStatus){
-               case Epos2Exception.ERR_PARAM : message = "Invalid parameter"; break;
-               case Epos2Exception.ERR_MEMORY: message = "Out of Memory"; break;
-               case Epos2Exception.ERR_FAILURE : message = "Unknown Error"; break;
-               default: message = Integer.toString(errorStatus);
-           }
-           res.success = false;
-           res.message = message;
-           return res;
-       }
-       res.success = true;
-       res.message = "Sukses";
-       return res;
+        MyReturnValue res = new MyReturnValue();
+        if (this.mPrinter == null) {
+            res.success = false;
+            res.message = "Printer belum di inisiasi";
+            return res;
+        }
+        try {
+            this.mPrinter.addCut(Printer.PARAM_DEFAULT);
+        } catch (Epos2Exception e) {
+            String message;
+            int errorStatus = e.getErrorStatus();
+            switch (errorStatus) {
+            case Epos2Exception.ERR_PARAM:
+                message = "Invalid parameter";
+                break;
+            case Epos2Exception.ERR_MEMORY:
+                message = "Out of Memory";
+                break;
+            case Epos2Exception.ERR_FAILURE:
+                message = "Unknown Error";
+                break;
+            default:
+                message = Integer.toString(errorStatus);
+            }
+            res.success = false;
+            res.message = message;
+            return res;
+        }
+        res.success = true;
+        res.message = "Sukses";
+        return res;
     }
 
     private boolean connectPrinter() {
@@ -143,38 +172,56 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener{
         }
         try {
             this.mPrinter.connect("TCP:192.168.0.117", Printer.PARAM_DEFAULT);
-        }
-        catch (Epos2Exception e) {
-             String message;
+        } catch (Epos2Exception e) {
+            String message;
             int errorStatus = e.getErrorStatus();
-            switch(errorStatus){
-                case Epos2Exception.ERR_PARAM: message = "Parameter Invalid"; break;
-                case Epos2Exception.ERR_CONNECT: message = "Gagal terkoneksi dengan printer"; break;
-                case Epos2Exception.ERR_TIMEOUT: message = "Koneksi ke printer timeout"; break;
-                case Epos2Exception.ERR_ILLEGAL: message = "Koneksi printer telah terbuka"; break;
-                case Epos2Exception.ERR_MEMORY: message = "Out of memory"; break;
-                case Epos2Exception.ERR_FAILURE: message = "Unknown Error"; break;
-                case Epos2Exception.ERR_PROCESSING: message = "Tidak dapat menjalankan operasi"; break;
-                case Epos2Exception.ERR_NOT_FOUND: message = "Printer tidak ditemukan"; break;
-                case Epos2Exception.ERR_IN_USE: message = "Printer sedang dipakai"; break;
-                case Epos2Exception.ERR_TYPE_INVALID: message = "Printer bukan TM 82"; break;
-                default: message = "Error";
+            switch (errorStatus) {
+            case Epos2Exception.ERR_PARAM:
+                message = "Parameter Invalid";
+                break;
+            case Epos2Exception.ERR_CONNECT:
+                message = "Gagal terkoneksi dengan printer";
+                break;
+            case Epos2Exception.ERR_TIMEOUT:
+                message = "Koneksi ke printer timeout";
+                break;
+            case Epos2Exception.ERR_ILLEGAL:
+                message = "Koneksi printer telah terbuka";
+                break;
+            case Epos2Exception.ERR_MEMORY:
+                message = "Out of memory";
+                break;
+            case Epos2Exception.ERR_FAILURE:
+                message = "Unknown Error";
+                break;
+            case Epos2Exception.ERR_PROCESSING:
+                message = "Tidak dapat menjalankan operasi";
+                break;
+            case Epos2Exception.ERR_NOT_FOUND:
+                message = "Printer tidak ditemukan";
+                break;
+            case Epos2Exception.ERR_IN_USE:
+                message = "Printer sedang dipakai";
+                break;
+            case Epos2Exception.ERR_TYPE_INVALID:
+                message = "Printer bukan TM 82";
+                break;
+            default:
+                message = "Error";
             }
-            Toast.makeText(this.reactContext,message,1).show();
+            Toast.makeText(this.reactContext, message, 1).show();
             return false;
         }
         try {
             this.mPrinter.beginTransaction();
             isBeginTransaction = true;
-        }
-        catch (Exception e) {
-            
+        } catch (Exception e) {
+
         }
         if (isBeginTransaction == false) {
             try {
                 this.mPrinter.disconnect();
-            }
-            catch (Epos2Exception e) {
+            } catch (Epos2Exception e) {
                 // Do nothing
                 return false;
             }
@@ -182,9 +229,10 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener{
         return true;
     }
 
-    private void dispPrinterWarnings(PrinterStatusInfo status){
+    private void dispPrinterWarnings(PrinterStatusInfo status) {
         String warningsMsg = "";
-        if(status == null) return;
+        if (status == null)
+            return;
         if (status.getPaper() == Printer.PAPER_NEAR_END) {
             warningsMsg += "Kertas Sudah Mau Habis";
         }
@@ -193,8 +241,8 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener{
             warningsMsg += "Baterai sudah mau habis";
         }
 
-        if(warningsMsg.length() > 0){
-            Toast.makeText(this.reactContext,warningsMsg,1).show();
+        if (warningsMsg.length() > 0) {
+            Toast.makeText(this.reactContext, warningsMsg, 1).show();
         }
     }
 
@@ -205,12 +253,10 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener{
 
         if (status.getConnection() == Printer.FALSE) {
             return false;
-        }
-        else if (status.getOnline() == Printer.FALSE) {
+        } else if (status.getOnline() == Printer.FALSE) {
             return false;
-        }
-        else {
-            ;//print available
+        } else {
+            ;// print available
         }
 
         return true;
@@ -219,58 +265,61 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener{
     @Override
     public MyReturnValue startPrint() {
         MyReturnValue res = new MyReturnValue();
-        if(this.mPrinter == null){
+        if (this.mPrinter == null) {
             res.success = false;
             res.message = "Printer belum di inisiasi";
             return res;
         }
-        if(!connectPrinter()){
+        if (!connectPrinter()) {
             res.success = false;
             res.message = "Gagal terhubung dengan printer";
             return res;
         }
         PrinterStatusInfo status = mPrinter.getStatus();
         dispPrinterWarnings(status);
-        if(!isPrintable(status)){
-            try{
+        if (!isPrintable(status)) {
+            try {
                 this.mPrinter.disconnect();
-            }catch( Exception e){
+            } catch (Exception e) {
 
             }
             res.success = false;
             res.message = "Printer tidak siap print";
             return res;
         }
-        try{
+        try {
             this.mPrinter.sendData(Printer.PARAM_DEFAULT);
-        }catch(Epos2Exception e){
-            try{
+        } catch (Epos2Exception e) {
+            try {
                 this.mPrinter.disconnect();
-            }catch( Exception ee){
+            } catch (Exception ee) {
 
             }
             String message;
-           int errorStatus = e.getErrorStatus();
-           switch(errorStatus){
-               case Epos2Exception.ERR_PARAM : message = "Invalid parameter"; break;
-               case Epos2Exception.ERR_MEMORY: message = "Out of Memory"; break;
-               case Epos2Exception.ERR_FAILURE : message = "Unknown Error"; break;
-               default: message = Integer.toString(errorStatus);
-           }
-           res.success = false;
-           res.message = message;
-           return res;
+            int errorStatus = e.getErrorStatus();
+            switch (errorStatus) {
+            case Epos2Exception.ERR_PARAM:
+                message = "Invalid parameter";
+                break;
+            case Epos2Exception.ERR_MEMORY:
+                message = "Out of Memory";
+                break;
+            case Epos2Exception.ERR_FAILURE:
+                message = "Unknown Error";
+                break;
+            default:
+                message = Integer.toString(errorStatus);
+            }
+            res.success = false;
+            res.message = message;
+            return res;
         }
-        // this.mPrinter.clearCommandBuffer();
-        // this.mPrinter.setReceiveEventListener(null);
-        // this.listener.onPrinterClosed("Berhasil ditutup");
-        // this.mPrinter = null;
         res.success = true;
         res.message = "Berhasil";
         return res;
     }
 
-      private void finalizeObject() {
+    private void finalizeObject() {
         if (this.mPrinter == null) {
             return;
         }
@@ -280,8 +329,9 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener{
         this.mPrinter.setReceiveEventListener(null);
 
         this.mPrinter = null;
-    }
 
+        this.listener.onPrinterClosed("Printer has successfully closed");
+    }
 
     private void disconnectPrinter() {
         if (this.mPrinter == null) {
@@ -290,26 +340,33 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener{
 
         try {
             this.mPrinter.endTransaction();
-        }
-        catch (final Exception e) {
+        } catch (final Epos2Exception e) {
+            int errorStatus = e.getErrorStatus();
+            this.listener.onPrinterClosed(Integer.toString(errorStatus));
 
         }
 
         try {
             this.mPrinter.disconnect();
-        }
-        catch (final Exception e) {
-
+        } catch (final Epos2Exception e) {
+            int errorStatus = e.getErrorStatus();
+            this.listener.onPrinterClosed(Integer.toString(errorStatus));
+            
         }
 
         finalizeObject();
     }
 
     @Override
-    public void onPtrReceive(final Printer printerObj, final int coode, final PrinterStatusInfo status, final String printJobId){
+    public void onPtrReceive(final Printer printerObj, final int coode, final PrinterStatusInfo status,
+            final String printJobId) {
         dispPrinterWarnings(status);
-        disconnectPrinter();
+        new Thread(new Runnable(){
+            @Override
+            public void run(){
+                disconnectPrinter();
+            }
+        }).start();
     }
-    
 
 }
