@@ -29,7 +29,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
 
   @Override
   public void onInitializeSuccess(String deviceInfo) {
-    if(mPromise !== null){
+    if(mPromise != null){
       mPromise.resolve(deviceInfo);
       Toast.makeText(getReactApplicationContext(), deviceInfo, Toast.LENGTH_LONG).show();
     }
@@ -37,7 +37,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
 
   @Override
   public void onInitializeError(Error error) {
-    if(mPromise !== null){
+    if(mPromise != null){
       mPromise.reject(error.toString());
       Toast.makeText(getReactApplicationContext(), "ERROR:" + error.toString(), Toast.LENGTH_LONG).show();
     }
