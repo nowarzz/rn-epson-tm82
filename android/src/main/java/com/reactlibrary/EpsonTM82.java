@@ -16,7 +16,7 @@ import com.epson.epos2.printer.ReceiveListener;
 
 import java.util.Map;
 
-public class EpsonTM82 implements Printer{
+public class EpsonTM82 implements com.reactlibrary.Printer{
 
     private String TAG = "EPSONPrinter";
     private Printer mPrinter = null;
