@@ -1,5 +1,8 @@
 package com.nowarzz.rnepson;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.widget.Toast;
 
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -195,8 +198,36 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   }
 
   @ReactMethod
-  public void writeImage(String path, ReadableMap property) {
-    printer.writeImage(path, property);
+  public void writeImage(String base64encodeStr, @Nullable ReadableMap property, Promise promise) {
+    int width = 0;
+    int leftPadding = 0;
+    if(property != null){
+      width = property.hasKey("width") ? property.getInt("width") : 0;
+      leftPadding = property.hasKey("left") ? property.getInt("left") :0;
+    }
+    if(width > deviceWidth || width == 0){
+      width = deviceWidth;
+    }
+    byte[] bytes= Base64.decode(base64encodeStr, Base64.DEFAULT);
+    Bitmap mBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+    if(mBitmap != null){
+      double ratio = (double) mBitmap.getHeight() / (double) mBitmap.getWidth();
+      int height = (int) (width * ratio);
+      int nMode = 0;
+      if(width > 0 && height > 0){
+        Bitmap rBitmap = Bitmap.createScaledBitmap(mBitmap,width,height,true);
+        MyReturnValue res = printer.writeImage(rBitmap,leftPadding,0,width,height);
+        if(res.success){
+          promise.resolve(null);
+        }else{
+          promise.reject(res.message);
+        }
+      }else{
+        promise.reject(String.format("Width and height must be more than 0. Width:%s Height:%s Ratio: %s, Bitmap Width: %s, Bitmap Height: %s",Integer.toString(width), Integer.toString(height), Double.toString(ratio), Integer.toString(mBitmap.getWidth()), Integer.toString(mBitmap.getHeight())));
+      }
+    }else{
+      promise.resolve(null);
+    }
   }
 
   @ReactMethod

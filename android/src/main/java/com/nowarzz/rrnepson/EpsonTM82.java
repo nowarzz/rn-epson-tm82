@@ -91,8 +91,39 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
     }
 
     @Override
-    public void writeImage(String path, ReadableMap property) {
-        Toast.makeText(this.reactContext, "Currently Not Supported", 1).show();
+    public MyReturnValue writeImage(Bitmap data, int x, int y, int width, int height) {
+        MyReturnValue res = new MyReturnValue();
+        if (this.mPrinter == null) {
+            res.success = false;
+            res.message = "Printer belum di inisiasi";
+            return res;
+        }
+        try {
+            this.mPrinter.addImage(data,x,y,width,height,Printer.PARAM_DEFAULT, Printer.PARAM_DEFAULT, Printer.PARAM_DEFAULT, Printer.PARAM_DEFAULT, Printer.PARAM_DEFAULT);
+        } catch (Epos2Exception e) {
+             String message;
+            int errorStatus = e.getErrorStatus();
+            switch (errorStatus) {
+            case Epos2Exception.ERR_PARAM:
+                message = "Invalid parameter";
+                message += String.format("X:%s , y=%s, width=%s, height=%s",Integer.toString(x),Integer.toString(y),Integer.toString(width),Integer.toString(height));
+                break;
+            case Epos2Exception.ERR_MEMORY:
+                message = "Out of Memory";
+                break;
+            case Epos2Exception.ERR_FAILURE:
+                message = "Unknown Error";
+                break;
+            default:
+                message = Integer.toString(errorStatus);
+            }
+            res.success = false;
+            res.message = message;
+            return res;
+        }
+        res.success = true;
+        res.message = "Sukses";
+        return res;
     }
 
     @Override
