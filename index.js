@@ -38,6 +38,15 @@ export default {
   },
   startPrint: (ipAddress) => {
     RNThermalPrinter.startPrint(ipAddress);
+  },
+  initializeDiscovery: ()=>{
+    RNThermalPrinter.initializeDiscovery();
+  },
+  startDiscovery: ()=>{
+    RNThermalPrinter.startDiscovery();
+  },
+  stopDiscovery: ()=>{
+    RNThermalPrinter.stopDiscovery();
   }
   // printDemo: ()=> {
   //   this.startPrint();

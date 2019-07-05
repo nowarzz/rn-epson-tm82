@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.widget.Toast;
+import android.support.v4.content.LocalBroadcastManager;
+import android.content.IntentFilter;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -27,13 +29,19 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
 
   private final ReactApplicationContext reactContext;
 
+  private LocalBroadcastReceiver mLocalBroadcastReceiver;
+
   MyPrinter printer;
   Promise mPromise;
   Promise pPromise;
+  EpsonDiscovery discovery;
 
   public RNReactNativeEpsonTm82Module(ReactApplicationContext reactContext) {
     super(reactContext);
     this.reactContext = reactContext;
+    this.mLocalBroadcastReceiver = new LocalBroadcastReceiver(reactContext);
+    LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(reactContext);
+    localBroadcastManager.registerReceiver(mLocalBroadcastReceiver, new IntentFilter("TMPrinterFound"));
   }
 
   @Override
@@ -48,6 +56,8 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
       Toast.makeText(getReactApplicationContext(), deviceInfo, Toast.LENGTH_LONG).show();
     }
   }
+
+
 
   @Override
   public void onInitializeError(Error error) {
@@ -67,6 +77,34 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
       }
     }
     // Toast.makeText(getReactApplicationContext(), "Printer closed: " + message, Toast.LENGTH_LONG).show();
+  }
+
+  @ReactMethod
+  public void initializeDiscovery(Promise promise){
+    discovery = new EpsonDiscovery(getReactApplicationContext());
+    promise.resolve(null);
+  }
+
+
+
+  @ReactMethod
+  public void startDiscovery(Promise promise){
+    MyReturnValue res = discovery.startDiscovery();
+    if(res.success){
+      promise.resolve(null);
+    }else{
+      promise.reject(res.message);
+    }
+  }
+
+  @ReactMethod
+  public void stopDiscovery(Promise promise){
+    MyReturnValue res = discovery.stopDiscovery();
+    if(res.success){
+      promise.resolve(null);
+    }else{
+      promise.reject(res.message);
+    }
   }
 
   @ReactMethod
