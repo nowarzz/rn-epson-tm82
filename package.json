@@ -1,8 +1,7 @@
-
 {
-  "name": "react-native-epson-tm82",
+  "name": "rn-epson-tm82",
   "version": "1.0.0",
-  "description": "",
+  "description": "Project Under Development! Do Not Use Until It Launch.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,11 +9,19 @@
   "keywords": [
     "react-native"
   ],
-  "author": "",
-  "license": "",
+  "author": "Willy Martin (lucky.nowarzz@gmail.com)",
+  "license": "MIT",
   "peerDependencies": {
-    "react-native": "^0.41.2",
-    "react-native-windows": "0.41.0-rc.1"
-
-  }
+    "react-native": "^0.41.2"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nowarzz/react-native-epson-tm82.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nowarzz/react-native-epson-tm82/issues"
+  },
+  "homepage": "https://github.com/nowarzz/react-native-epson-tm82#readme"
 }
