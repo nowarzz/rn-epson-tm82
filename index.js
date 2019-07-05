@@ -19,6 +19,9 @@ export default {
   writeText :(text, property) => {
     RNThermalPrinter.writeText(text, property);
   },
+  printColumn: (columnWidth, columnAligns, columnText, options) => {
+    RNThermalPrinter.printColumn(columnWidth,columnAligns,columnText,options);
+  },
   writeQRCode: (content, property) => {
     RNThermalPrinter.writeQRCode(content, property);
   },
