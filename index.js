@@ -36,11 +36,8 @@ export default {
       'cut': type,
     });
   },
-  startPrint: () => {
-    RNThermalPrinter.startPrint();
-  },
-  endPrint :() => {
-    RNThermalPrinter.endPrint();
+  startPrint: (ipAddress) => {
+    RNThermalPrinter.startPrint(ipAddress);
   }
   // printDemo: ()=> {
   //   this.startPrint();

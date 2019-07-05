@@ -251,9 +251,9 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   }
 
   @ReactMethod
-  public void startPrint(Promise promise) {
+  public void startPrint(String ipAddress, Promise promise) {
     pPromise = promise;
-    MyReturnValue res = printer.startPrint(); 
+    MyReturnValue res = printer.startPrint(ipAddress); 
   }
 
   private static boolean isChinese(char c) {

@@ -196,13 +196,13 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
         return res;
     }
 
-    private boolean connectPrinter() {
+    private boolean connectPrinter(String ipAddress) {
         boolean isBeginTransaction = false;
         if (this.mPrinter == null) {
             return false;
         }
         try {
-            this.mPrinter.connect("TCP:192.168.0.117", Printer.PARAM_DEFAULT);
+            this.mPrinter.connect(String.format("TCP:%s",ipAddress), Printer.PARAM_DEFAULT);
         } catch (Epos2Exception e) {
             String message;
             int errorStatus = e.getErrorStatus();
@@ -294,14 +294,14 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
     }
 
     @Override
-    public MyReturnValue startPrint() {
+    public MyReturnValue startPrint(String ipAddress) {
         MyReturnValue res = new MyReturnValue();
         if (this.mPrinter == null) {
             res.success = false;
             res.message = "Printer belum di inisiasi";
             return res;
         }
-        if (!connectPrinter()) {
+        if (!connectPrinter(ipAddress)) {
             res.success = false;
             res.message = "Gagal terhubung dengan printer";
             return res;
