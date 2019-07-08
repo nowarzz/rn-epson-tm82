@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 public interface MyPrinter {
     MyReturnValue writeText(String text, ReadableMap property);
     void writeQRCode(String content, ReadableMap property);
+    MyReturnValue addTextAlign(int align);
     MyReturnValue writeImage(Bitmap data, int x, int y, int width, int height);
     MyReturnValue writeFeed(int length);
     MyReturnValue writeCut(ReadableMap property);

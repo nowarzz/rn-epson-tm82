@@ -14,6 +14,7 @@ import com.epson.epos2.printer.PrinterStatusInfo;
 import com.epson.epos2.printer.ReceiveListener;
 
 import java.util.Map;
+import java.util.HashMap;
 
 public class EpsonTM82 implements MyPrinter, ReceiveListener {
 
@@ -49,6 +50,7 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
         this.listener.onInitializeSuccess("Success Connected");
     }
 
+
     @Override
     public MyReturnValue writeText(String text, ReadableMap property) {
         MyReturnValue res = new MyReturnValue();
@@ -82,6 +84,43 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
         }
         res.success = true;
         res.message = "Added";
+        return res;
+    }
+
+    
+    @Override
+    public MyReturnValue addTextAlign(int align){
+        MyReturnValue res = new MyReturnValue();
+        if (this.mPrinter == null) {
+            res.success = false;
+            res.message = "Printer belum di inisiasi";
+            return res;
+        }
+        try{
+            this.mPrinter.addTextAlign(align);
+        }catch(Epos2Exception e){
+            String message;
+            int errorStatus = e.getErrorStatus();
+            switch (errorStatus) {
+            case Epos2Exception.ERR_PARAM:
+                message = "Parameter Invalid";
+                break;
+            case Epos2Exception.ERR_MEMORY:
+                message = "Out of memory";
+                break;
+            case Epos2Exception.ERR_FAILURE:
+                message = "Unknown Error";
+                break;
+            default:
+                message = Integer.toString(errorStatus);
+            }
+            Toast.makeText(this.reactContext, message, 1).show();
+            res.success = false;
+            res.message = message;
+            return res;
+        }
+        res.success = true;
+        res.message="Sukses";
         return res;
     }
 
