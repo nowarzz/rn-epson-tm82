@@ -19,6 +19,10 @@ import java.util.List;
 import java.util.ArrayList;
 import javax.annotation.Nullable;
 
+import java.util.Map;
+import java.util.HashMap;
+
+import com.epson.epos2.printer.Printer;
 
 public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule implements PrinterEventListener {
 
@@ -85,6 +89,16 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
     promise.resolve(null);
   }
 
+  @Override
+  public Map<String,Object> getConstants(){
+    final Map<String, Object> constants = new HashMap<>();
+    constants.put("ALIGN_LEFT", Printer.ALIGN_LEFT);
+    constants.put("ALIGN_CENTER", Printer.ALIGN_CENTER);
+    constants.put("ALIGN_RIGHT", Printer.ALIGN_RIGHT);
+    constants.put("PARAM_DEFAULT", Printer.PARAM_DEFAULT);
+    return constants;
+  }
+
 
 
   @ReactMethod
@@ -118,6 +132,16 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
     MyReturnValue res = printer.writeText(text, property);
     if(res.success){
       promise.resolve(res.message);
+    }else{
+      promise.reject(res.message);
+    }
+  }
+
+  @ReactMethod
+  public void addTextAlign(int align, Promise promise){
+    MyReturnValue res = printer.addTextAlign(align);
+    if(res.success){
+      promise.resolve(null);
     }else{
       promise.reject(res.message);
     }

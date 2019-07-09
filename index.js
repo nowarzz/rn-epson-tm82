@@ -12,9 +12,14 @@ function CheckPlatformSupport() {
   return true;
 }
 
+
 export default {
+  RNThermalPrinter,
   initialize : ()=> {
     RNThermalPrinter.initilize();
+  },
+  addTextAlign: (align)=>{
+    RNThermalPrinter.addTextAlign(align);
   },
   writeText :(text, property) => {
     RNThermalPrinter.writeText(text, property);
