@@ -122,13 +122,13 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   }
 
   @ReactMethod
-  public void initilize(Promise promise) {
+  public void initialize(Promise promise) {
     mPromise = promise;
     printer = new EpsonTM82(getReactApplicationContext(), this);
   }
 
   @ReactMethod
-  public void writeText(String text, ReadableMap property,Promise promise) {
+  public void writeText(String text, @Nullable ReadableMap property,Promise promise) {
     MyReturnValue res = printer.writeText(text, property);
     if(res.success){
       promise.resolve(res.message);
@@ -148,7 +148,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   }
 
   @ReactMethod
-  public void writePulse(ReadableMap parameter, Promise promise){
+  public void writePulse(@Nullable ReadableMap parameter, Promise promise){
     MyReturnValue res = printer.writePulse(parameter);
     if(res.success){
       promise.resolve(null);
@@ -266,7 +266,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   }
 
   @ReactMethod
-  public void writeQRCode(String content, ReadableMap property, Promise promise) {
+  public void writeQRCode(String content, @Nullable ReadableMap property, Promise promise) {
     MyReturnValue res = printer.writeQRCode(content, property);
     if(res.success){
       promise.resolve(null);
@@ -319,8 +319,8 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   }
 
   @ReactMethod
-  public void writeCut(ReadableMap property,Promise promise) { 
-    MyReturnValue res = printer.writeCut(property);
+  public void writeCut(Promise promise) { 
+    MyReturnValue res = printer.writeCut();
     if(res.success){
       promise.resolve(res.message);
     }else{
