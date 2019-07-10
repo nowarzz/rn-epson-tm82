@@ -15,6 +15,7 @@ import com.epson.epos2.printer.ReceiveListener;
 
 import java.util.Map;
 import java.util.HashMap;
+import javax.annotation.Nullable;
 
 public class EpsonTM82 implements MyPrinter, ReceiveListener {
 
@@ -52,7 +53,7 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
 
 
     @Override
-    public MyReturnValue writeText(String text, ReadableMap property) {
+    public MyReturnValue writeText(String text,@Nullable ReadableMap property) {
         MyReturnValue res = new MyReturnValue();
         if (this.mPrinter == null) {
             res.success = false;
@@ -91,7 +92,7 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
             return res;
         }
         try{
-            this.mPrinter.addTextSize(Printer.PARAM_UNSPECIFIED,fontSize);
+            this.mPrinter.addTextSize(fontSize,fontSize);
         }catch(Epos2Exception e){
             String message;
             int errorStatus = e.getErrorStatus();
@@ -114,7 +115,7 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
             return res;
         }
         try {
-            this.mPrinter.addText(text,property);
+            this.mPrinter.addText(text);
         } catch (Epos2Exception e) {
             String message;
             int errorStatus = e.getErrorStatus();
@@ -179,7 +180,7 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
     }
 
     @Override
-    public MyReturnValue writePulse(ReadableMap property){
+    public MyReturnValue writePulse(@Nullable ReadableMap property){
         MyReturnValue res = new MyReturnValue();
         String optionDrawer = property.hasKey("drawer") ? property.getString("drawer") : "default";
         int paramDrawer = Printer.PARAM_DEFAULT;
@@ -242,7 +243,7 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
     }
 
     @Override
-    public MyReturnValue writeQRCode(String content, ReadableMap property) {
+    public MyReturnValue writeQRCode(String content, @Nullable ReadableMap property) {
         MyReturnValue res = new MyReturnValue();
         if (this.mPrinter == null) {
             res.success = false;
@@ -250,7 +251,7 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
             return res;
         }
         try{
-            this.mPrinter.addSymbol(content,Printer.SYMBOL_QRRCODE_MODEL_1,Printer.PARAM_DEFAULT,Printer.PARAM_UNSPECIFIED, Printer.PARAM_UNSPECIFIED, Printer.PARAM_UNSPECIFIED);
+            this.mPrinter.addSymbol(content,Printer.SYMBOL_QRCODE_MODEL_1,Printer.PARAM_DEFAULT,Printer.PARAM_UNSPECIFIED, Printer.PARAM_UNSPECIFIED, Printer.PARAM_UNSPECIFIED);
         }catch(Epos2Exception e){
             String message;
             int errorStatus = e.getErrorStatus();
@@ -348,7 +349,7 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
     }
 
     @Override
-    public MyReturnValue writeCut(ReadableMap property) {
+    public MyReturnValue writeCut() {
         MyReturnValue res = new MyReturnValue();
         if (this.mPrinter == null) {
             res.success = false;
@@ -575,7 +576,7 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
     }
 
     @Override
-    public void onPtrReceive(final Printer printerObj, final int coode, final PrinterStatusInfo status,
+    public void onPtrReceive(final Printer printerObj, final int code, final PrinterStatusInfo status,
             final String printJobId) {
         dispPrinterWarnings(status);
         new Thread(new Runnable(){
