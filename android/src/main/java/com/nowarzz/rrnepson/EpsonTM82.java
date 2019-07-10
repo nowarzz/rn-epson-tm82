@@ -125,8 +125,39 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
     }
 
     @Override
-    public void writeQRCode(String content, ReadableMap property) {
-        Toast.makeText(this.reactContext, "Currently Not Supported", 1).show();
+    public MyReturnValue writeQRCode(String content, ReadableMap property) {
+        MyReturnValue res = new MyReturnValue();
+        if (this.mPrinter == null) {
+            res.success = false;
+            res.message = "Printer belum di inisiasi";
+            return res;
+        }
+        try{
+            this.mPrinter.addSymbol(content,Printer.SYMBOL_QRRCODE_MODEL_1,Printer.PARAM_DEFAULT,Printer.PARAM_UNSPECIFIED, Printer.PARAM_UNSPECIFIED, Printerr.PARAM_UNSPECIFIED);
+        }catch(Epos2Exception e){
+            String message;
+            int errorStatus = e.getErrorStatus();
+            switch (errorStatus) {
+            case Epos2Exception.ERR_PARAM:
+                message = "Invalid parameter";
+                message += String.format("X:%s , y=%s, width=%s, height=%s",Integer.toString(x),Integer.toString(y),Integer.toString(width),Integer.toString(height));
+                break;
+            case Epos2Exception.ERR_MEMORY:
+                message = "Out of Memory";
+                break;
+            case Epos2Exception.ERR_FAILURE:
+                message = "Unknown Error";
+                break;
+            default:
+                message = Integer.toString(errorStatus);
+            }
+            res.success = false;
+            res.message = message;
+            return res;
+        }
+        res.success=true;
+        res.message="Sukses";
+        return res;
     }
 
     @Override

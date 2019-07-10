@@ -1,5 +1,6 @@
 v 1.2.0
--
+- Remove toast on success init
+- Add Write QR Code
 
 v 1.1.1
 - Fix Build Gradle Compiler Version

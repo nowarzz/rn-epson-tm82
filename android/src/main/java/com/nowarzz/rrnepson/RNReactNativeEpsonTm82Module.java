@@ -255,8 +255,13 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   }
 
   @ReactMethod
-  public void writeQRCode(String content, ReadableMap property) {
-    printer.writeQRCode(content, property);
+  public void writeQRCode(String content, ReadableMap property, Promise promise) {
+    MyReturnValue res = printer.writeQRCode(content, property);
+    if(res.success){
+      promise.resolve(null);
+    }else{
+      promise.reject(res.message);
+    }
   }
 
   @ReactMethod
