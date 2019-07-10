@@ -148,6 +148,16 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   }
 
   @ReactMethod
+  public void writePulse(ReadableMap parameter, Promise promise){
+    MyReturnValue res = printer.writePulse(parameter);
+    if(res.success){
+      promise.resolve(null);
+    }else{
+      promise.reject(res.message);
+    }
+  }
+
+  @ReactMethod
   public void printColumn(ReadableArray columnWidths, ReadableArray columnAligns, ReadableArray columnTexts, @Nullable ReadableMap options, final Promise promise){
     if(columnWidths.size() != columnTexts.size() || columnWidths.size() != columnAligns.size()){
       promise.reject("COLUMN_WIDTH_ALIGNS_AND_TEXTS_NOT_MATCH");

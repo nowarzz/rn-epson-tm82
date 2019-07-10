@@ -9,5 +9,6 @@ public interface MyPrinter {
     MyReturnValue writeImage(Bitmap data, int x, int y, int width, int height);
     MyReturnValue writeFeed(int length);
     MyReturnValue writeCut(ReadableMap property);
+    MyReturnValue writePulse(ReadableMap property);
     MyReturnValue startPrint(String ipAddress);
 }
