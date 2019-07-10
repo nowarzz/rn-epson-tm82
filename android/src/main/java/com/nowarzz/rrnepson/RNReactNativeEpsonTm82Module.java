@@ -57,7 +57,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   public void onInitializeSuccess(String deviceInfo) {
     if(mPromise != null){
       mPromise.resolve(deviceInfo);
-      Toast.makeText(getReactApplicationContext(), deviceInfo, Toast.LENGTH_LONG).show();
+      // Toast.makeText(getReactApplicationContext(), deviceInfo, Toast.LENGTH_LONG).show();
     }
   }
 
