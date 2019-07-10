@@ -3,6 +3,7 @@ v 1.2.0
 - Add Write QR Code
 - Add Font Size and Bold Styling to Write Text
 - Refactor print column to match to constant TM.ALIGN_(ALIGNMENT)
+- Add styling to print column
 
 v 1.1.1
 - Fix Build Gradle Compiler Version

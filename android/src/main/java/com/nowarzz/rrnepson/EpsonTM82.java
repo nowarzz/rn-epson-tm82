@@ -61,7 +61,7 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
         }
         boolean bold = property.hasKey("bold") ? property.getBoolean("bold") : false;
         int fontSize = property.hasKey("fontSize") ? property.getInt("fontSize") : 1;
-        int paramEM = bold ? Printer.PARAM_TRUE : Printer.PARAM_FALSE;
+        int paramEM = bold ? Printer.TRUE : Printer.FALSE;
         if(fontSize > 8){
             res.success = false;
             res.message = "Invalid Font Size";
@@ -174,6 +174,69 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
             return res;
         }
         res.success = true;
+        res.message="Sukses";
+        return res;
+    }
+
+    @Override
+    public MyReturnValue writePulse(ReadableMap property){
+        MyReturnValue res = new MyReturnValue();
+        String optionDrawer = property.hasKey("drawer") ? property.getString("drawer") : "default";
+        int paramDrawer = Printer.PARAM_DEFAULT;
+        switch (optionDrawer){
+            case "2pin":
+                paramDrawer = Printer.DRAWER_2PIN;
+                break;
+            case "5pin":
+                paramDrawer = Printer.DRAWER_5PIN;
+                break;
+            default:
+                paramDrawer = Printer.PARAM_DEFAULT;
+        }
+        int optionTime = property.hasKey("time") ? property.getInt("time") : 0;
+        int paramTime = Printer.PARAM_DEFAULT;
+        switch (optionTime){
+            case 100:
+                paramTime = Printer.PULSE_100;
+                break;
+            case 200:
+                paramTime = Printer.PULSE_200;
+                break;
+            case 300:
+                paramTime = Printer.PULSE_300;
+                break;
+            case 400:
+                paramTime = Printer.PULSE_400;
+                break;
+            case 500:
+                paramTime = Printer.PULSE_500;
+                break;
+            default:
+                paramTime = Printer.PARAM_DEFAULT;
+        }
+        try {
+            this.mPrinter.addPulse(paramDrawer, paramTime);
+        } catch (Epos2Exception e) {
+            String message;
+            int errorStatus = e.getErrorStatus();
+            switch (errorStatus) {
+            case Epos2Exception.ERR_PARAM:
+                message = "Invalid parameter";
+                break;
+            case Epos2Exception.ERR_MEMORY:
+                message = "Out of Memory";
+                break;
+            case Epos2Exception.ERR_FAILURE:
+                message = "Unknown Error";
+                break;
+            default:
+                message = Integer.toString(errorStatus);
+            }
+            res.success = false;
+            res.message = message;
+            return res;
+        }
+        res.success=true;
         res.message="Sukses";
         return res;
     }
