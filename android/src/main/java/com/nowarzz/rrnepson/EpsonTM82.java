@@ -250,14 +250,13 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
             return res;
         }
         try{
-            this.mPrinter.addSymbol(content,Printer.SYMBOL_QRRCODE_MODEL_1,Printer.PARAM_DEFAULT,Printer.PARAM_UNSPECIFIED, Printer.PARAM_UNSPECIFIED, Printerr.PARAM_UNSPECIFIED);
+            this.mPrinter.addSymbol(content,Printer.SYMBOL_QRRCODE_MODEL_1,Printer.PARAM_DEFAULT,Printer.PARAM_UNSPECIFIED, Printer.PARAM_UNSPECIFIED, Printer.PARAM_UNSPECIFIED);
         }catch(Epos2Exception e){
             String message;
             int errorStatus = e.getErrorStatus();
             switch (errorStatus) {
             case Epos2Exception.ERR_PARAM:
                 message = "Invalid parameter";
-                message += String.format("X:%s , y=%s, width=%s, height=%s",Integer.toString(x),Integer.toString(y),Integer.toString(width),Integer.toString(height));
                 break;
             case Epos2Exception.ERR_MEMORY:
                 message = "Out of Memory";
