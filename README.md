@@ -88,7 +88,7 @@ await TM.writeText("My Label Here",option);
 //TODO: add parameter to customize text
 ```javascript
 const column = [16,16,16];
-const align =[0,1,2];
+const align =[TM.ALIGN_LEFT,TM.ALIGN_CENTER,TM.ALIGN_RIGHT];
 await TM.printColumn(column,align,["Align Left","Align Center","Align Right"],{});
 
 ```

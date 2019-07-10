@@ -191,6 +191,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
         splited.add(new ColumnSplitedString(shorter,temp));
       }
       int align = columnAligns.getInt(i);
+      if(align == Printer.PARAM_DEFAULT) align = Printer.ALIGN_LEFT;
       List<String> formated = new ArrayList<String>();
       for(ColumnSplitedString s: splited){
         StringBuilder empty = new StringBuilder();
@@ -199,7 +200,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
         }
         int startIdx = 0;
         String ss = s.getStr();
-        if(align == 1 && ss.length()<(width-s.getShorter())){
+        if(align == Printer.ALIGN_CENTER && ss.length()<(width-s.getShorter())){
           startIdx = (width-s.getShorter()-ss.length())/2;
           if(startIdx+ss.length()>width-s.getShorter()){
             startIdx--;
@@ -207,7 +208,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
           if(startIdx<0){
             startIdx=0;
           }
-        }else if(align == 2 && ss.length()<(width-s.getShorter())){
+        }else if(align == Printer.ALIGN_RIGHT && ss.length()<(width-s.getShorter())){
           startIdx = width - s.getShorter() - ss.length();
         }
         empty.replace(startIdx,startIdx+ss.length(),ss);
@@ -242,7 +243,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
     for(int i=0;i<rowsToPrint.length;i++){
       rowsToPrint[i].append("\n\r");
       try{
-        MyReturnValue res = printer.writeText(rowsToPrint[i].toString(), null);
+        MyReturnValue res = printer.writeText(rowsToPrint[i].toString(), options);
         if(!res.success){
           promise.reject(res.message);
           return;
