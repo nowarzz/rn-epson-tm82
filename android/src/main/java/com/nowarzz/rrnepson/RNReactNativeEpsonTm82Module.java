@@ -57,7 +57,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   public void onInitializeSuccess(String deviceInfo) {
     if(mPromise != null){
       mPromise.resolve(deviceInfo);
-      Toast.makeText(getReactApplicationContext(), deviceInfo, Toast.LENGTH_LONG).show();
+      // Toast.makeText(getReactApplicationContext(), deviceInfo, Toast.LENGTH_LONG).show();
     }
   }
 
@@ -122,13 +122,13 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   }
 
   @ReactMethod
-  public void initilize(Promise promise) {
+  public void initialize(Promise promise) {
     mPromise = promise;
     printer = new EpsonTM82(getReactApplicationContext(), this);
   }
 
   @ReactMethod
-  public void writeText(String text, ReadableMap property,Promise promise) {
+  public void writeText(String text, @Nullable ReadableMap property,Promise promise) {
     MyReturnValue res = printer.writeText(text, property);
     if(res.success){
       promise.resolve(res.message);
@@ -140,6 +140,16 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   @ReactMethod
   public void addTextAlign(int align, Promise promise){
     MyReturnValue res = printer.addTextAlign(align);
+    if(res.success){
+      promise.resolve(null);
+    }else{
+      promise.reject(res.message);
+    }
+  }
+
+  @ReactMethod
+  public void writePulse(@Nullable ReadableMap parameter, Promise promise){
+    MyReturnValue res = printer.writePulse(parameter);
     if(res.success){
       promise.resolve(null);
     }else{
@@ -191,6 +201,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
         splited.add(new ColumnSplitedString(shorter,temp));
       }
       int align = columnAligns.getInt(i);
+      if(align == Printer.PARAM_DEFAULT) align = Printer.ALIGN_LEFT;
       List<String> formated = new ArrayList<String>();
       for(ColumnSplitedString s: splited){
         StringBuilder empty = new StringBuilder();
@@ -199,7 +210,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
         }
         int startIdx = 0;
         String ss = s.getStr();
-        if(align == 1 && ss.length()<(width-s.getShorter())){
+        if(align == Printer.ALIGN_CENTER && ss.length()<(width-s.getShorter())){
           startIdx = (width-s.getShorter()-ss.length())/2;
           if(startIdx+ss.length()>width-s.getShorter()){
             startIdx--;
@@ -207,7 +218,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
           if(startIdx<0){
             startIdx=0;
           }
-        }else if(align == 2 && ss.length()<(width-s.getShorter())){
+        }else if(align == Printer.ALIGN_RIGHT && ss.length()<(width-s.getShorter())){
           startIdx = width - s.getShorter() - ss.length();
         }
         empty.replace(startIdx,startIdx+ss.length(),ss);
@@ -242,7 +253,7 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
     for(int i=0;i<rowsToPrint.length;i++){
       rowsToPrint[i].append("\n\r");
       try{
-        MyReturnValue res = printer.writeText(rowsToPrint[i].toString(), null);
+        MyReturnValue res = printer.writeText(rowsToPrint[i].toString(), options);
         if(!res.success){
           promise.reject(res.message);
           return;
@@ -255,8 +266,13 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   }
 
   @ReactMethod
-  public void writeQRCode(String content, ReadableMap property) {
-    printer.writeQRCode(content, property);
+  public void writeQRCode(String content, @Nullable ReadableMap property, Promise promise) {
+    MyReturnValue res = printer.writeQRCode(content, property);
+    if(res.success){
+      promise.resolve(null);
+    }else{
+      promise.reject(res.message);
+    }
   }
 
   @ReactMethod
@@ -303,8 +319,8 @@ public class RNReactNativeEpsonTm82Module extends ReactContextBaseJavaModule imp
   }
 
   @ReactMethod
-  public void writeCut(ReadableMap property,Promise promise) { 
-    MyReturnValue res = printer.writeCut(property);
+  public void writeCut(Promise promise) { 
+    MyReturnValue res = printer.writeCut();
     if(res.success){
       promise.resolve(res.message);
     }else{

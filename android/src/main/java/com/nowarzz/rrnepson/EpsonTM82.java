@@ -15,6 +15,7 @@ import com.epson.epos2.printer.ReceiveListener;
 
 import java.util.Map;
 import java.util.HashMap;
+import javax.annotation.Nullable;
 
 public class EpsonTM82 implements MyPrinter, ReceiveListener {
 
@@ -52,11 +53,65 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
 
 
     @Override
-    public MyReturnValue writeText(String text, ReadableMap property) {
+    public MyReturnValue writeText(String text,@Nullable ReadableMap property) {
         MyReturnValue res = new MyReturnValue();
         if (this.mPrinter == null) {
             res.success = false;
             res.message = "Printer belum di inisiasi";
+            return res;
+        }
+        boolean bold = property.hasKey("bold") ? property.getBoolean("bold") : false;
+        int fontSize = property.hasKey("fontSize") ? property.getInt("fontSize") : 1;
+        int paramEM = bold ? Printer.TRUE : Printer.FALSE;
+        if(fontSize > 8){
+            res.success = false;
+            res.message = "Invalid Font Size";
+            return res;
+        }
+        try{
+            this.mPrinter.addTextStyle(Printer.PARAM_UNSPECIFIED, Printer.PARAM_UNSPECIFIED, paramEM, Printer.PARAM_UNSPECIFIED);
+        }catch(Epos2Exception e){
+            String message;
+            int errorStatus = e.getErrorStatus();
+            switch (errorStatus) {
+            case Epos2Exception.ERR_PARAM:
+                message = "Parameter Invalid";
+                break;
+            case Epos2Exception.ERR_MEMORY:
+                message = "Out of memory";
+                break;
+            case Epos2Exception.ERR_FAILURE:
+                message = "Unknown Error";
+                break;
+            default:
+                message = Integer.toString(errorStatus);
+            }
+            Toast.makeText(this.reactContext, message, 1).show();
+            res.success = false;
+            res.message = message;
+            return res;
+        }
+        try{
+            this.mPrinter.addTextSize(fontSize,fontSize);
+        }catch(Epos2Exception e){
+            String message;
+            int errorStatus = e.getErrorStatus();
+            switch (errorStatus) {
+            case Epos2Exception.ERR_PARAM:
+                message = "Parameter Invalid";
+                break;
+            case Epos2Exception.ERR_MEMORY:
+                message = "Out of memory";
+                break;
+            case Epos2Exception.ERR_FAILURE:
+                message = "Unknown Error";
+                break;
+            default:
+                message = Integer.toString(errorStatus);
+            }
+            Toast.makeText(this.reactContext, message, 1).show();
+            res.success = false;
+            res.message = message;
             return res;
         }
         try {
@@ -125,8 +180,101 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
     }
 
     @Override
-    public void writeQRCode(String content, ReadableMap property) {
-        Toast.makeText(this.reactContext, "Currently Not Supported", 1).show();
+    public MyReturnValue writePulse(@Nullable ReadableMap property){
+        MyReturnValue res = new MyReturnValue();
+        String optionDrawer = property.hasKey("drawer") ? property.getString("drawer") : "default";
+        int paramDrawer = Printer.PARAM_DEFAULT;
+        switch (optionDrawer){
+            case "2pin":
+                paramDrawer = Printer.DRAWER_2PIN;
+                break;
+            case "5pin":
+                paramDrawer = Printer.DRAWER_5PIN;
+                break;
+            default:
+                paramDrawer = Printer.PARAM_DEFAULT;
+        }
+        int optionTime = property.hasKey("time") ? property.getInt("time") : 0;
+        int paramTime = Printer.PARAM_DEFAULT;
+        switch (optionTime){
+            case 100:
+                paramTime = Printer.PULSE_100;
+                break;
+            case 200:
+                paramTime = Printer.PULSE_200;
+                break;
+            case 300:
+                paramTime = Printer.PULSE_300;
+                break;
+            case 400:
+                paramTime = Printer.PULSE_400;
+                break;
+            case 500:
+                paramTime = Printer.PULSE_500;
+                break;
+            default:
+                paramTime = Printer.PARAM_DEFAULT;
+        }
+        try {
+            this.mPrinter.addPulse(paramDrawer, paramTime);
+        } catch (Epos2Exception e) {
+            String message;
+            int errorStatus = e.getErrorStatus();
+            switch (errorStatus) {
+            case Epos2Exception.ERR_PARAM:
+                message = "Invalid parameter";
+                break;
+            case Epos2Exception.ERR_MEMORY:
+                message = "Out of Memory";
+                break;
+            case Epos2Exception.ERR_FAILURE:
+                message = "Unknown Error";
+                break;
+            default:
+                message = Integer.toString(errorStatus);
+            }
+            res.success = false;
+            res.message = message;
+            return res;
+        }
+        res.success=true;
+        res.message="Sukses";
+        return res;
+    }
+
+    @Override
+    public MyReturnValue writeQRCode(String content, @Nullable ReadableMap property) {
+        MyReturnValue res = new MyReturnValue();
+        if (this.mPrinter == null) {
+            res.success = false;
+            res.message = "Printer belum di inisiasi";
+            return res;
+        }
+        try{
+            this.mPrinter.addSymbol(content,Printer.SYMBOL_QRCODE_MODEL_1,Printer.PARAM_DEFAULT,Printer.PARAM_UNSPECIFIED, Printer.PARAM_UNSPECIFIED, Printer.PARAM_UNSPECIFIED);
+        }catch(Epos2Exception e){
+            String message;
+            int errorStatus = e.getErrorStatus();
+            switch (errorStatus) {
+            case Epos2Exception.ERR_PARAM:
+                message = "Invalid parameter";
+                break;
+            case Epos2Exception.ERR_MEMORY:
+                message = "Out of Memory";
+                break;
+            case Epos2Exception.ERR_FAILURE:
+                message = "Unknown Error";
+                break;
+            default:
+                message = Integer.toString(errorStatus);
+            }
+            res.success = false;
+            res.message = message;
+            return res;
+        }
+        res.success=true;
+        res.message="Sukses";
+        return res;
     }
 
     @Override
@@ -201,7 +349,7 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
     }
 
     @Override
-    public MyReturnValue writeCut(ReadableMap property) {
+    public MyReturnValue writeCut() {
         MyReturnValue res = new MyReturnValue();
         if (this.mPrinter == null) {
             res.success = false;
@@ -428,7 +576,7 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
     }
 
     @Override
-    public void onPtrReceive(final Printer printerObj, final int coode, final PrinterStatusInfo status,
+    public void onPtrReceive(final Printer printerObj, final int code, final PrinterStatusInfo status,
             final String printJobId) {
         dispPrinterWarnings(status);
         new Thread(new Runnable(){
