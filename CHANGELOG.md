@@ -4,6 +4,7 @@ v 1.2.0
 - Add Font Size and Bold Styling to Write Text
 - Refactor print column to match to constant TM.ALIGN_(ALIGNMENT)
 - Add styling to print column
+- Add Write Pulse to open cash drawer
 
 v 1.1.1
 - Fix Build Gradle Compiler Version
