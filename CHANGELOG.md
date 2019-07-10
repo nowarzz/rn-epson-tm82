@@ -1,6 +1,7 @@
 v 1.2.0
 - Remove toast on success init
 - Add Write QR Code
+- Add Font Size and Bold Styling to Write Text
 
 v 1.1.1
 - Fix Build Gradle Compiler Version

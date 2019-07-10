@@ -59,8 +59,62 @@ public class EpsonTM82 implements MyPrinter, ReceiveListener {
             res.message = "Printer belum di inisiasi";
             return res;
         }
+        boolean bold = property.hasKey("bold") ? property.getBoolean("bold") : false;
+        int fontSize = property.hasKey("fontSize") ? property.getInt("fontSize") : 1;
+        int paramEM = bold ? Printer.PARAM_TRUE : Printer.PARAM_FALSE;
+        if(fontSize > 8){
+            res.success = false;
+            res.message = "Invalid Font Size";
+            return res;
+        }
+        try{
+            this.mPrinter.addTextStyle(Printer.PARAM_UNSPECIFIED, Printer.PARAM_UNSPECIFIED, paramEM, Printer.PARAM_UNSPECIFIED);
+        }catch(Epos2Exception e){
+            String message;
+            int errorStatus = e.getErrorStatus();
+            switch (errorStatus) {
+            case Epos2Exception.ERR_PARAM:
+                message = "Parameter Invalid";
+                break;
+            case Epos2Exception.ERR_MEMORY:
+                message = "Out of memory";
+                break;
+            case Epos2Exception.ERR_FAILURE:
+                message = "Unknown Error";
+                break;
+            default:
+                message = Integer.toString(errorStatus);
+            }
+            Toast.makeText(this.reactContext, message, 1).show();
+            res.success = false;
+            res.message = message;
+            return res;
+        }
+        try{
+            this.mPrinter.addTextSize(Printer.PARAM_UNSPECIFIED,fontSize);
+        }catch(Epos2Exception e){
+            String message;
+            int errorStatus = e.getErrorStatus();
+            switch (errorStatus) {
+            case Epos2Exception.ERR_PARAM:
+                message = "Parameter Invalid";
+                break;
+            case Epos2Exception.ERR_MEMORY:
+                message = "Out of memory";
+                break;
+            case Epos2Exception.ERR_FAILURE:
+                message = "Unknown Error";
+                break;
+            default:
+                message = Integer.toString(errorStatus);
+            }
+            Toast.makeText(this.reactContext, message, 1).show();
+            res.success = false;
+            res.message = message;
+            return res;
+        }
         try {
-            this.mPrinter.addText(text);
+            this.mPrinter.addText(text,property);
         } catch (Epos2Exception e) {
             String message;
             int errorStatus = e.getErrorStatus();

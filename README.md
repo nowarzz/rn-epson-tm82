@@ -71,8 +71,18 @@ await TM.initialize();
 *writeText ==> Add text to printer buffer
 //TODO: add parameter to customize text
 ```javascript
-await TM.writeText("My Label Here");
+const option = {
+  bold: true,
+  fontSize:2
+}
+await TM.writeText("My Label Here",option);
 ```
+#### Options for write text ####
+##### bold #####
+  true or false
+##### fontSize #####
+  range of 1 to 8. Max 8. Standard usage is between 1 to 2.
+
 
 *printColumn ==> Split text based on column
 //TODO: add parameter to customize text
@@ -83,7 +93,11 @@ await TM.printColumn(column,align,["Align Left","Align Center","Align Right"],{}
 
 ```
 
-*writeQRCode ==> Under Implementation
+*writeQRCode ==> Add QR Code to buffer.
+```javascript
+const msg = "QRCODE TEXT";
+await TM.writeQRCode(msg);
+```
 
 *writeImage ==> Add image to buffer. Accept only base64 string
 ```javascript
@@ -108,7 +122,7 @@ await TM.writeCut();
 ```javascript
 await TM.startPrint(ipAddress);
 ```
-#### Options for image ####
+#### Options for start print ####
 ##### ipAddress #####
   IP Address on String "000.000.000.000" format. Example:  "192.168.192.168"
 
