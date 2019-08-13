@@ -168,3 +168,12 @@ await TM.writeFeed(2);
 await TM.writeText("Thank you. Please come back again");
 await TM.startPrint();
 ```
+
+### For Proguard-Rules ###
+
+if you are using Proguard on Release, add this syntax to your android/app/proguard-rules.pro
+
+```
+-keep class com.epson.** {*;} 
+-dontwarn com.epson.**
+```
